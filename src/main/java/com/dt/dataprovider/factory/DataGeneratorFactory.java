@@ -3,7 +3,7 @@ package com.dt.dataprovider.factory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.dt.dataprovider.model.enums.ServiceType;
+import com.dt.dataprovider.model.enums.ComponentType;
 import com.dt.dataprovider.service.ChokeValveDataService;
 import com.dt.dataprovider.service.DataGeneratorService;
 
@@ -17,8 +17,8 @@ public class DataGeneratorFactory {
 		this.chokeValveDataService = chokeValveDataService;
 	}
 
-	public DataGeneratorService getDataGeneratorService(ServiceType serviceType) {
-		if (ServiceType.choke.equals(serviceType)) {
+	public DataGeneratorService getDataGeneratorService(ComponentType componentType) {
+		if (ComponentType.choke.equals(componentType)) {
 			return chokeValveDataService;
 		}
 		return null;

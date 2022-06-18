@@ -10,7 +10,7 @@ import com.dt.dataprovider.config.MqttGateway;
 import com.dt.dataprovider.model.Pressure;
 import com.dt.dataprovider.model.Temperature;
 import com.dt.dataprovider.model.enums.MeasurementType;
-import com.dt.dataprovider.model.enums.ServiceType;
+import com.dt.dataprovider.model.enums.ComponentType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 
@@ -21,9 +21,9 @@ public class ChokeValveDataService implements DataGeneratorService {
 
 	public static final double MIN_VALUE = 0.0001;
 
-	private ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 
-	private MqttGateway mqttGateway;
+	private final MqttGateway mqttGateway;
 
 	@Autowired
 	public ChokeValveDataService(ObjectMapper objectMapper, MqttGateway mqttGateway) {
@@ -33,7 +33,7 @@ public class ChokeValveDataService implements DataGeneratorService {
 
 	@SneakyThrows
 	public void generateData(String serviceName, MeasurementType measurementType, int number, int rate, boolean useCsvFile) {
-		String topic = ServiceType.choke + "." + serviceName + "." + measurementType;
+		String topic = ComponentType.choke + "." + serviceName + "." + measurementType;
 		System.out.println("Generating " + number + " messages for topic: " + topic);
 
 		IntStream.range(0, number).forEach(value -> {
@@ -64,15 +64,11 @@ public class ChokeValveDataService implements DataGeneratorService {
 	}
 
 	private Pressure buildPressure(double random) {
-		Pressure pressure = Pressure.builder().value(String.format("%.4f", random))
-				.timeStamp(LocalDateTime.now().toString()).build();
-		return pressure;
+		return Pressure.builder().value(String.format("%.4f", random)).timeStamp(LocalDateTime.now().toString()).build();
 	}
 
 	private Temperature buildTemperature(double random) {
-		Temperature temperature = Temperature.builder().value(String.format("%.4f", random))
-				.timeStamp(LocalDateTime.now().toString()).build();
-		return temperature;
+		return Temperature.builder().value(String.format("%.4f", random)).timeStamp(LocalDateTime.now().toString()).build();
 	}
 
 }
