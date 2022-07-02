@@ -21,6 +21,8 @@ public class DataProviderController {
 		this.dataGeneratorFactory = dataGeneratorFactory;
 	}
 
+	//TODO use an object here
+
 	@PostMapping("/send-message")
 	public ResponseEntity<Void> publish(
 			@RequestParam ComponentType componentType,
@@ -28,9 +30,9 @@ public class DataProviderController {
 			@RequestParam MeasurementType measurementType,
 			@RequestParam(defaultValue = "1") int number,
 			@RequestParam(defaultValue = "1") int rate,
-			@RequestParam(required = false, defaultValue = "false") boolean useCsvFile) {
+			@RequestParam(required = false) String customPropertyName) {
 		DataGeneratorService dataGenerator = dataGeneratorFactory.getDataGeneratorService(componentType);
-		dataGenerator.generateData(componentId, measurementType, number, rate, useCsvFile);
+		dataGenerator.generateData(componentId, measurementType, number, rate, customPropertyName);
 		return ResponseEntity.accepted().build();
 	}
 

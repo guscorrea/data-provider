@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dt.dataprovider.config.MqttGateway;
+import com.dt.dataprovider.model.CustomMeasure;
 import com.dt.dataprovider.model.Flow;
 import com.dt.dataprovider.model.Pressure;
 import com.dt.dataprovider.model.Temperature;
@@ -33,7 +34,7 @@ public class ChokeValveDataService implements DataGeneratorService {
 	}
 
 	@SneakyThrows
-	public void generateData(String serviceName, MeasurementType measurementType, int number, int rate, boolean useCsvFile) {
+	public void generateData(String serviceName, MeasurementType measurementType, int number, int rate, String customPropertyName) {
 		String topic = ComponentType.choke + "." + serviceName + "." + measurementType;
 		System.out.println("Generating " + number + " messages for topic: " + topic);
 
@@ -53,7 +54,8 @@ public class ChokeValveDataService implements DataGeneratorService {
 				sendMessageToBroker(rate, topic, flow);
 				break;
 			default:
-				//code for default
+				CustomMeasure customMeasure = buildCustomMeasure(randomValueGenerator.buildRandomValue(), customPropertyName);
+				sendMessageToBroker(rate, topic, customMeasure);
 			}
 		});
 
@@ -81,6 +83,13 @@ public class ChokeValveDataService implements DataGeneratorService {
 
 	private Flow buildFlow(int percentage) {
 		return Flow.builder().value(String.valueOf(percentage)).timeStamp(LocalDateTime.now().toString()).build();
+	}
+
+	private CustomMeasure buildCustomMeasure(double random, String customPropertyName) {
+		return CustomMeasure.builder()
+				.propertyType(customPropertyName)
+				.value(String.format("%.4f", random))
+				.timeStamp(LocalDateTime.now().toString()).build();
 	}
 
 }
