@@ -7,28 +7,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dt.dataprovider.config.MqttGateway;
+import com.dt.dataprovider.model.Flow;
 import com.dt.dataprovider.model.Pressure;
 import com.dt.dataprovider.model.Temperature;
-import com.dt.dataprovider.model.enums.MeasurementType;
 import com.dt.dataprovider.model.enums.ComponentType;
+import com.dt.dataprovider.model.enums.MeasurementType;
+import com.dt.dataprovider.utils.RandomValueGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 
 @Service
 public class ChokeValveDataService implements DataGeneratorService {
 
-	public static final double MAX_VALUE = 99.9999;
-
-	public static final double MIN_VALUE = 0.0001;
-
 	private final ObjectMapper objectMapper;
 
 	private final MqttGateway mqttGateway;
 
+	private final RandomValueGenerator randomValueGenerator;
+
 	@Autowired
-	public ChokeValveDataService(ObjectMapper objectMapper, MqttGateway mqttGateway) {
+	public ChokeValveDataService(ObjectMapper objectMapper, MqttGateway mqttGateway, RandomValueGenerator randomValueGenerator) {
 		this.objectMapper = objectMapper;
 		this.mqttGateway = mqttGateway;
+		this.randomValueGenerator = randomValueGenerator;
 	}
 
 	@SneakyThrows
@@ -38,15 +39,22 @@ public class ChokeValveDataService implements DataGeneratorService {
 
 		IntStream.range(0, number).forEach(value -> {
 
-			double random = MIN_VALUE + Math.random() * (MAX_VALUE - MIN_VALUE);
-
-			if (MeasurementType.temperature.equals(measurementType)) {
-				sendMessageToBroker(rate, topic, buildTemperature(random));
+			switch (measurementType) {
+			case temperature:
+				Temperature temperature = buildTemperature(randomValueGenerator.buildRandomValue());
+				sendMessageToBroker(rate, topic, temperature);
+				break;
+			case pressure:
+				Pressure pressure = buildPressure(randomValueGenerator.buildRandomValue());
+				sendMessageToBroker(rate, topic, pressure);
+				break;
+			case flow:
+				Flow flow = buildFlow(randomValueGenerator.buildPercentage());
+				sendMessageToBroker(rate, topic, flow);
+				break;
+			default:
+				//code for default
 			}
-			else {
-				sendMessageToBroker(rate, topic, buildPressure(random));
-			}
-
 		});
 
 		System.out.println("Process is finished");
@@ -69,6 +77,10 @@ public class ChokeValveDataService implements DataGeneratorService {
 
 	private Temperature buildTemperature(double random) {
 		return Temperature.builder().value(String.format("%.4f", random)).timeStamp(LocalDateTime.now().toString()).build();
+	}
+
+	private Flow buildFlow(int percentage) {
+		return Flow.builder().value(String.valueOf(percentage)).timeStamp(LocalDateTime.now().toString()).build();
 	}
 
 }
