@@ -7,6 +7,7 @@ import com.dt.dataprovider.model.enums.ComponentType;
 import com.dt.dataprovider.service.AnmDataService;
 import com.dt.dataprovider.service.ChokeValveDataService;
 import com.dt.dataprovider.service.DataGeneratorService;
+import com.dt.dataprovider.service.TubingDataService;
 
 @Component
 public class DataGeneratorFactory {
@@ -15,19 +16,26 @@ public class DataGeneratorFactory {
 
 	private final AnmDataService anmDataService;
 
+	private final TubingDataService tubingDataService;
+
 	@Autowired
-	public DataGeneratorFactory(ChokeValveDataService chokeValveDataService, AnmDataService anmDataService) {
+	public DataGeneratorFactory(ChokeValveDataService chokeValveDataService, AnmDataService anmDataService, TubingDataService tubingDataService) {
 		this.chokeValveDataService = chokeValveDataService;
 		this.anmDataService = anmDataService;
+		this.tubingDataService = tubingDataService;
 	}
 
 	public DataGeneratorService getDataGeneratorService(ComponentType componentType) {
-		if (ComponentType.choke.equals(componentType)) {
+
+		switch (componentType) {
+		case choke:
 			return chokeValveDataService;
-		}
-		else if (ComponentType.anm.equals(componentType)) {
+		case anm:
 			return anmDataService;
+		case tubing:
+			return tubingDataService;
 		}
+
 		return null;
 	}
 
