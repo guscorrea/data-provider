@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.dt</groupId>
 	<artifactId>data-provider</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>data-provider</name>
 	<description>Digital twin data provider</description>
 	<properties>
