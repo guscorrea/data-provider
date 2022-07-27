@@ -23,7 +23,7 @@ public class DataProviderController {
 
 	//TODO use an object here
 
-	@PostMapping("/send-message")
+	@PostMapping("/v1/send-message")
 	public ResponseEntity<Void> publish(
 			@RequestParam ComponentType componentType,
 			@RequestParam String componentId,

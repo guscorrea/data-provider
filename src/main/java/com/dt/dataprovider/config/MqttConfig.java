@@ -38,8 +38,8 @@ public class MqttConfig {
 		options.setServerURIs(new String[] { url });
 		options.setUserName(username);
 		options.setPassword(password.toCharArray());
-		options.setCleanSession(true);
-		options.setMaxInflight(1000);
+		options.setCleanSession(false);
+		options.setMaxInflight(2000);
 		factory.setConnectionOptions(options);
 		return factory;
 	}
@@ -55,7 +55,7 @@ public class MqttConfig {
 		MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler(clientId, mqttClientFactory());
 		messageHandler.setAsync(true);
 		messageHandler.setDefaultTopic("#");
-		messageHandler.setConverter(new DefaultPahoMessageConverter());
+		messageHandler.setConverter(new DefaultPahoMessageConverter(qos, false));
 		messageHandler.setDefaultRetained(false);
 		messageHandler.setDefaultQos(qos);
 		return messageHandler;
