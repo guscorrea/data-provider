@@ -15,8 +15,10 @@ import com.dt.dataprovider.model.enums.MeasurementType;
 import com.dt.dataprovider.utils.RandomValueGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class AnmDataService implements DataGeneratorService {
 
 	private final ObjectMapper objectMapper;
@@ -35,7 +37,7 @@ public class AnmDataService implements DataGeneratorService {
 	@SneakyThrows
 	public void generateData(String serviceName, MeasurementType measurementType, int number, int rate, String customPropertyName) {
 		String topic = ComponentType.anm + "." + serviceName + "." + measurementType;
-		System.out.println("Generating " + number + " messages for topic: " + topic);
+		log.info("Generating {} messages for topic: {}", number, topic);
 
 		IntStream.range(0, number).forEach(value -> {
 
@@ -54,12 +56,12 @@ public class AnmDataService implements DataGeneratorService {
 			}
 		});
 
-		System.out.println("Process is finished");
+		log.info("Data generation is finished");
 	}
 
 	private void sendMessageToBroker(int rate, String topic, Object object) {
 		try {
-			System.out.println("Sending message: " + object.toString() + " to MQTT gateway");
+			log.info("Sending message: {} to MQTT gateway", object.toString());
 			mqttGateway.sendToMqtt(objectMapper.writeValueAsString(object), topic, 2);
 			Thread.sleep(rate);
 		}
