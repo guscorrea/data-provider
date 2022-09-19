@@ -12,7 +12,7 @@
   "paths" : {
     "/v1/send-message" : {
       "post" : {
-        "tags" : [ "data-provider-controller" ],
+        "tags" : [ "Data Provider" ],
         "summary" : "Posts one or more messages to the proper MQTT broker",
         "description" : "Generates one or more messages to be posted in the Mosquitto broker topic. Parameters will determine what type of message it will be, the rate in which the messages will be posted, and to what component it belongs.",
         "operationId" : "publishMessage",
