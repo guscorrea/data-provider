@@ -1,0 +1,118 @@
+{
+	"openapi": "3.0.1",
+	"info": {
+		"title": "Data provider",
+		"description": "The data-provider simulates the real-world, IoT sensor data that will be consumed by the virtual DT microservices.",
+		"version": "1.0.0"
+	},
+	"servers": [
+		{
+			"url": "http://localhost:8080",
+			"description": "Local Docker deployment URL"
+		}
+	],
+	"paths": {
+		"/v1/send-message": {
+			"post": {
+				"tags": [
+					"Data Provider"
+				],
+				"summary": "Posts one or more messages to the proper MQTT broker",
+				"description": "Generates one or more messages to be posted in the Mosquitto broker topic. Parameters will determine what type of message it will be, the rate in which the messages will be posted, and to what component it belongs.",
+				"operationId": "publishMessage",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/DataProviderRequest"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"202": {
+						"description": "Message request was accepted and will be processed asynchronously."
+					},
+					"400": {
+						"description": "The request failed validation.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"example": "Field componentType: must not be null"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Unexpected error occurred",
+						"content": {
+							"application/json": {}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"DataProviderRequest": {
+				"required": [
+					"componentId",
+					"componentType",
+					"measurementType",
+					"number",
+					"rate"
+				],
+				"type": "object",
+				"properties": {
+					"componentType": {
+						"type": "string",
+						"description": "The component type of the virtual DT sensor message",
+						"enum": [
+							"choke",
+							"anm",
+							"tubing",
+							"anular"
+						]
+					},
+					"componentId": {
+						"type": "string",
+						"description": "The virtual DT component unique identifier",
+						"format": "uuid",
+						"example": "ccf9e52b-e2e4-45d8-8884-0721d3246a53"
+					},
+					"measurementType": {
+						"type": "string",
+						"description": "The measurement type of the virtual DT sensor message",
+						"enum": [
+							"temperature",
+							"pressure",
+							"flow",
+							"custom"
+						]
+					},
+					"number": {
+						"minLength": 1,
+						"type": "integer",
+						"description": "The number of messages to be generated in a single request",
+						"format": "int32",
+						"example": 100
+					},
+					"rate": {
+						"type": "integer",
+						"description": "The rate in which messages will be generated in a single request",
+						"format": "int32",
+						"example": 10
+					},
+					"customPropertyName": {
+						"type": "string",
+						"description": "Custom property name when measurement type is custom"
+					}
+				},
+				"description": "The data provider request contains message and component related information"
+			}
+		}
+	}
+}
